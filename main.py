@@ -13,6 +13,10 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(120))
 
+    def __init__(self, title, body):
+        self.title = title
+        self.body = body
+
 def get_blogList():
     return Blog.query.all()
 
@@ -45,10 +49,16 @@ def add_Blog():
 def newpost_page():
     return render_template('newpost.html')
 
+@app.route('/blog/<id>', methods=['GET'])
+def clickBlog(id):
+
+    oneBlog = Blog.query.filter_by(id=id).all()
+
+    return render_template('singleBlog.html', indBlog=oneBlog)
+
 
 @app.route('/blog')
 def blogPage():
-
     return render_template('blog.html',blogList=get_blogList())
 
 @app.route("/")

@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, flash, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -16,6 +16,31 @@ class Blog(db.Model):
 def get_blogList():
     return Blog.query.all()
 
+@app.route('/addBlog', methods=['POST'])
+def add_Blog():
+    new_blogTitle = request.form['blog_Title']
+    new_blogEntry = request.form['blog_NewEntry']
+
+    title_Error = ''
+    entry_Error = ''
+
+    if new_blogTitle == '':
+        title_Error = 'Title is empty'
+    if new_blogEntry == '':
+        entry_Error = 'Entry is empty'
+
+    if (title_Error != '') or (entry_Error != ''):
+        return render_template('newpost.html',
+                                title_Error = title_Error,
+                                entry_Error = entry_Error)
+    else:
+        blog = Blog(title=new_blogTitle, body=new_blogEntry)
+        db.session.add(blog)
+        db.session.commit()
+        return redirect('/')
+
+
+
 @app.route("/newpost")
 def newpost_page():
     return render_template('newpost.html')
@@ -29,6 +54,8 @@ def blogPage():
 @app.route("/")
 def index():
     return redirect('/blog')
+
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RU'
 
 
 if __name__ == "__main__":

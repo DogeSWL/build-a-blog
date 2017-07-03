@@ -1,4 +1,4 @@
-from flask import flask
+from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -13,6 +13,22 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(120))
 
+def get_blogList():
+    return Blog.query.all()
+
+@app.route("/newpost")
+def newpost_page():
+    return render_template('newpost.html')
+
+
+@app.route('/blog')
+def blogPage():
+
+    return render_template('blog.html',blogList=get_blogList())
+
+@app.route("/")
+def index():
+    return redirect('/blog')
 
 
 if __name__ == "__main__":

@@ -41,9 +41,11 @@ def add_Blog():
         blog = Blog(title=new_blogTitle, body=new_blogEntry)
         db.session.add(blog)
         db.session.commit()
-        return redirect('/')
 
+        lastID = db.session.query(Blog.id).order_by(Blog.id.desc()).first()
 
+        for curID in lastID:
+            return redirect('/blog/'+str(curID))
 
 @app.route("/newpost")
 def newpost_page():

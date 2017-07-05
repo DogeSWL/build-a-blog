@@ -45,23 +45,20 @@ def add_Blog():
         lastID = db.session.query(Blog.id).order_by(Blog.id.desc()).first()
 
         for curID in lastID:
-            return redirect('/blog/'+str(curID))
+            return redirect('/blog?id'+str(curID))
 
 @app.route("/newpost")
 def newpost_page():
     return render_template('newpost.html')
 
-@app.route('/blog/<id>', methods=['GET'])
-def clickBlog(id):
-
-    oneBlog = Blog.query.filter_by(id=id).all()
-
-    return render_template('singleBlog.html', indBlog=oneBlog)
-
-
-@app.route('/blog')
+@app.route('/blog', methods=['GET'])
 def blogPage():
-    return render_template('blog.html',blogList=get_blogList())
+    some_id = request.args.get('id') # extract the value of id
+    if some_id == None: # if value of id returns None render template blog.html
+        return render_template('blog.html',blogList=get_blogList())
+    else:
+        oneBlog = Blog.query.filter_by(id=some_id).all()
+        return render_template('singleBlog.html', indBlog=oneBlog)
 
 @app.route("/")
 def index():
